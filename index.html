@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>A'Dora Modas</title>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Quicksand:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --rose: #691e2d;
+      --white: #fff;
+      --black: #000;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Quicksand', sans-serif;
+      background-color: var(--white);
+      color: var(--black);
+    }
+
+    header {
+      background-color: var(--rose);
+      color: var(--white);
+      padding: 5px;
+      text-align: center;
+    }
+
+    header h1 {
+  font-family: 'Great Vibes', cursive;
+  font-size: 5em; /* já grande */
+  margin: 0;
+  padding-bottom: 1px; /* aproxima do menu */
+  text-align: left; /* alinha mais para a esquerda */
+  padding-left: 15px; /* puxa um pouco para a esquerda */
+}
+
+    nav {
+      display: flex;
+      justify-content: center;
+      background-color: var(--rose);
+      padding: 10px;
+      flex-wrap: wrap;
+    }
+
+    nav button {
+      background: var(--white);
+      border: none;
+      color: var(--rose);
+      font-size: 1em;
+      margin: 5px;
+      padding: 8px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    nav button:hover {
+      background: #f3d4da;
+    }
+
+    #collection-options {
+      display: none;
+      text-align: center;
+      margin: 10px;
+    }
+
+    #collection-options button {
+      background-color: var(--rose);
+      border: none;
+      color: var(--white);
+      padding: 8px 15px;
+      margin: 5px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    #collection-options button:hover {
+      background-color: #e4b8c1;
+    }
+
+    .search-bar {
+      padding: 10px;
+      text-align: center;
+    }
+
+    .search-bar input {
+      width: 80%;
+      padding: 10px;
+      border: 2px solid var(--rose);
+      border-radius: 20px;
+      font-size: 1em;
+      color: var(--rose);
+    }
+
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 15px;
+      justify-content: center;
+      padding: 10px;
+    }
+
+    .product-card {
+      border: 2px solid var(--rose);
+      border-radius: 15px;
+      text-align: center;
+      padding: 10px;
+      background-color: var(--white);
+      box-shadow: 0 2px 8px rgba(216, 167, 177, 0.3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .product-card img {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+    }
+
+    .product-card h3 {
+      margin: 5px 0;
+      font-size: 1em;
+      height: auto;
+    }
+
+    .product-card p {
+      margin: 5px 0;
+    }
+
+    .sizes, .colors {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: 5px 0;
+    }
+
+    .size, .color {
+      display: inline-block;
+      border: 1px solid var(--rose);
+      border-radius: 50%;
+      padding: 5px 10px;
+      margin: 3px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .color {
+      width: 20px;
+      height: 20px;
+      padding: 0;
+    }
+
+    .selected {
+      background-color: var(--rose);
+      color: var(--white);
+    }
+
+    .product-card button {
+      background-color: var(--rose);
+      color: var(--white);
+      border: none;
+      padding: 8px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      margin-top: 5px;
+      transition: background 0.3s;
+    }
+
+    .product-card button:hover {
+      background-color: #e4b8c1;
+    }
+
+    #cart-icon {
+  position: fixed;
+  top: 20px; 
+  right: 15px;
+  background-color: var(--rose);
+  color: var(--white);
+  padding: 8px; /* menor */
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1em; /* menor */
+  z-index: 999;
+  box-shadow: 0 2px 8px rgba(216, 167, 177, 0.5);
+}
+
+
+    #cart-icon span {
+      background-color: var(--white);
+      color: var(--rose);
+      border-radius: 50%;
+      padding: 2px 6px;
+      font-size: 0.8em;
+      position: absolute;
+      top: -5px;
+      right: -5px;
+    }
+
+    #cart-modal {
+      display: none;
+      position: fixed;
+      top: 60px;
+      right: 20px;
+      width: 320px;
+      background-color: var(--white);
+      border: 2px solid var(--rose);
+      border-radius: 15px;
+      padding: 20px;
+      z-index: 1000;
+      box-shadow: 0 5px 15px rgba(216, 167, 177, 0.5);
+    }
+
+    #cart-modal h2 {
+      margin-top: 0;
+      color: var(--rose);
+    }
+
+    .close-cart {
+      float: right;
+      background: none;
+      border: none;
+      font-size: 1.2em;
+      cursor: pointer;
+      color: var(--rose);
+    }
+
+    .cart-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .cart-item img {
+      width: 40px;
+      height: auto;
+      border-radius: 5px;
+      margin-right: 8px;
+    }
+
+    .cart-actions button {
+      background: none;
+      border: none;
+      font-size: 1em;
+      cursor: pointer;
+      color: var(--rose);
+    }
+
+    .whatsapp-btn {
+      background-color: var(--rose);
+      color: var(--white);
+      border: none;
+      padding: 12px;
+      border-radius: 25px;
+      width: 100%;
+      font-size: 1em;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.3s;
+    }
+
+    .whatsapp-btn:hover {
+      background-color: #e4b8c1;
+    }
+
+    footer {
+      margin-top: 40px;
+      padding: 20px;
+      background-color: var(--rose);
+      color: var(--white);
+      text-align: center;
+    }
+
+    form input, form textarea {
+      width: 90%;
+      margin: 5px 0;
+      padding: 10px;
+      border: 2px solid var(--white);
+      border-radius: 20px;
+      font-size: 1em;
+      color: var(--rose);
+    }
+
+    form button {
+      background-color: var(--white);
+      color: var(--rose);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 1em;
+      margin-top: 5px;
+      transition: background 0.3s;
+    }
+
+    form button:hover {
+      background-color: #f3d4da;
+    }
+
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 2.5em;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>A'Dora Modas</h1>
+</header>
+
+<nav>
+  <button onclick="filterProducts('all')">Início</button>
+  <button onclick="toggleCollection()">Coleção</button>
+</nav>
+
+<div id="collection-options">
+  <button onclick="filterProducts('camisetas')">Camisetas</button>
+  <button onclick="filterProducts('blusas')">Blusas</button>
+  <button onclick="filterProducts('saias')">Saias</button>
+  <button onclick="filterProducts('vestidos')">Vestidos</button>
+  <button onclick="filterProducts('conjuntos')">Conjuntos</button>
+</div>
+
+<div class="search-bar">
+  <input type="text" id="search" placeholder="Buscar produto..." oninput="searchProducts()">
+</div>
+
+<div class="products" id="product-list"></div>
+
+<div id="cart-icon" onclick="toggleCart()">🛒<span id="cart-count">0</span></div>
+
+<div id="cart-modal">
+  <button class="close-cart" onclick="toggleCart()">✖</button>
+  <h2>Seu Carrinho</h2>
+  <div id="cart-items"></div>
+  <button class="whatsapp-btn" onclick="checkout()">Comprar via WhatsApp</button>
+</div>
+
+<footer>
+  <h3>Dúvidas? Fale com a gente</h3>
+  <form action="https://formsubmit.co/isabellacandido007@gmail.com" method="POST">
+    <input type="text" name="nome" placeholder="Seu nome" required>
+    <input type="text" name="numero" placeholder="Seu número" required>
+    <textarea name="mensagem" placeholder="Sua mensagem" required></textarea>
+    <button type="submit">Enviar</button>
+  </form>
+  <p>Contato: 45 99915-7042 | Email: isabellacandido007@gmail.com</p>
+</footer>
+
+<script>
+const products = [
+  {
+    id: 1,
+    name: "Conjunto",
+    price: 89.90,
+    category: "conjuntos",
+    img: ["fotos/conjunto marrom.png", "fotos/conjunto marrom 2.png"],
+    tamanhos: ["M", "G"],
+    cores: ["#000000", "#d8a7b1"]
+  },
+  {
+    id: 2,
+    name: "Camiseta Branca",
+    price: 69.90,
+    category: "camisetas",
+    img: ["fotos/blusa branca listrada2.png"],
+    tamanhos: ["P", "M"],
+    cores: ["#000000", "#ffffff"]
+  },
+  {
+    id: 3,
+    name: "Saia Terra Cota",
+    price: 119.90,
+    category: "saias",
+    img: ["fotos/Estilo sofisticado e elegante.png"],
+    tamanhos: ["M", "G"],
+    cores: ["#d8a7b1", "#ffffff"]
+  },
+  {
+    id: 9,
+    name: "Vestido Bordô com Babados",
+    price: 159.90,
+    category: "vestidos",
+    img: ["fotos/vestido bordô babado2.png"],
+    tamanhos: ["P", "M", "G"],
+    cores: ["#000000"]
+  },
+  {
+    id: 4,
+    name: "Saia de lã",
+    price: 159.90,
+    category: "saias",
+    img: ["fotos/saia cinza lã.png"],
+    tamanhos: ["P", "M", "G"],
+    cores: ["#000000"]
+  },
+  {
+    id: 5,
+    name: "Saia Terra Cota",
+    price: 159.90,
+    category: "saias",
+    img: ["fotos/saia marrom 2.png"],
+    tamanhos: ["P", "M", "G"],
+    cores: ["#000000"]
+  },
+  {
+    id: 7,
+    name: "Vestido Marrom Claro Detalhista",
+    price: 159.90,
+    category: "vestidos",
+    img: ["fotos/Vesito marrom detalhes.jpeg"],
+    tamanhos: ["P", "M", "G"],
+    cores: ["#000000"]
+  },
+  {
+    id: 8,
+    name: "Vestido Azul Detalhista",
+    price: 159.90,
+    category: "vestidos",
+    img: ["fotos/Vestido azul com detalhes.jpg"],
+    tamanhos: ["P", "M", "G"],
+    cores: ["#000000"]
+  },
+  {
+    id: 10,
+    name: "Vestido Bordô",
+    price: 159.90,
+    category: "vestidos",
+    img: ["fotos/Vestido bordô.jpg"],
+    tamanhos: ["P", "M", "G"],
+    cores: ["#000000"]
+  },
+  {
+    id: 11,
+    name: "Vestido Marrom Médio",
+    price: 159.90,
+    category: "vestidos",
+    img: ["fotos/Vestido marrom.jpg"],
+    tamanhos: ["P", "M", "G"],
+    cores: ["#000000"]
+  },
+  {
+    id: 6,
+    name: "Saia Verde",
+    price: 159.90,
+    category: "saias",
+    img: ["fotos/saia verde.jpeg"],
+    tamanhos: ["P", "M", "G"],
+    cores: ["#000000"]
+  }
+];
+
+let cart = [];
+const currentIndex = {};
+
+function displayProducts(list) {
+  list.forEach(p => {
+    p.selectedSize = "";
+    p.selectedColor = "";
+  });
+  const container = document.getElementById("product-list");
+  container.innerHTML = "";
+  list.forEach(prod => {
+    const imgArray = Array.isArray(prod.img) ? prod.img : [prod.img];
+    container.innerHTML += `
+      <div class="product-card" id="product-${prod.id}">
+        <div class="carousel" id="carousel-${prod.id}">
+          <img src="${imgArray[0]}" alt="${prod.name}" id="img-${prod.id}" style="width:100%; border-radius:10px;">
+        </div>
+        <h3>${prod.name}</h3>
+        <p>R$ ${prod.price.toFixed(2)}</p>
+        <div class="sizes">
+          ${prod.tamanhos.map(t => `<span class="size" onclick="selectSize(${prod.id}, '${t}')">${t}</span>`).join('')}
+        </div>
+        <div class="colors">
+          ${prod.cores.map(c => `<span class="color" style="background-color:${c}" onclick="selectColor(${prod.id}, '${c}')"></span>`).join('')}
+        </div>
+        <button onclick="addToCart(${prod.id})">Adicionar ao carrinho</button>
+      </div>
+    `;
+    currentIndex[prod.id] = 0;
+    startAutoCarousel(prod.id, imgArray);
+  });
+}
+
+function startAutoCarousel(id, imgs) {
+  setInterval(() => {
+    currentIndex[id] = (currentIndex[id] + 1) % imgs.length;
+    document.getElementById(`img-${id}`).src = imgs[currentIndex[id]];
+  }, 2000);
+}
+
+function selectSize(prodId, size) {
+  const prod = products.find(p => p.id === prodId);
+  prod.selectedSize = size;
+  document.querySelectorAll(`#product-${prodId} .size`).forEach(el => {
+    el.classList.remove("selected-size");
+    if (el.innerText === size) {
+      el.classList.add("selected-size");
+    }
+  });
+}
+
+function selectColor(prodId, color) {
+  const prod = products.find(p => p.id === prodId);
+  prod.selectedColor = color;
+  document.querySelectorAll(`#product-${prodId} .color`).forEach(el => {
+    el.classList.remove("selected-color");
+    if (el.style.backgroundColor === color || el.style.background === color) {
+      el.classList.add("selected-color");
+    }
+  });
+}
+
+function filterProducts(category) {
+  if (category === 'all') {
+    displayProducts(products);
+  } else {
+    const filtered = products.filter(p => p.category === category);
+    displayProducts(filtered);
+  }
+}
+
+function toggleCollection() {
+  const col = document.getElementById("collection-options");
+  col.style.display = col.style.display === "none" ? "block" : "none";
+}
+
+function searchProducts() {
+  const search = document.getElementById("search").value.toLowerCase();
+  const filtered = products.filter(p => p.name.toLowerCase().includes(search));
+  displayProducts(filtered);
+}
+
+function addToCart(id) {
+  const prod = products.find(p => p.id === id);
+  if (!prod.selectedSize || !prod.selectedColor) {
+    alert("Por favor, selecione tamanho e cor antes de adicionar ao carrinho!");
+    return;
+  }
+  const found = cart.find(item => item.id === id && item.size === prod.selectedSize && item.color === prod.selectedColor);
+  if (found) {
+    found.qtd += 1;
+  } else {
+    cart.push({ ...prod, qtd: 1, size: prod.selectedSize, color: prod.selectedColor });
+  }
+  renderCart();
+  updateCartCount();
+}
+
+function renderCart() {
+  const container = document.getElementById("cart-items");
+  container.innerHTML = "";
+  cart.forEach(item => {
+    container.innerHTML += `
+      <div class="cart-item">
+        <img src="${Array.isArray(item.img) ? item.img[0] : item.img}" alt="${item.name}">
+        <span>${item.name} (${item.size}, ${item.color}) x${item.qtd}</span>
+        <span class="cart-actions">
+          <button onclick="changeQtd(${item.id}, '${item.size}', '${item.color}', 1)">+</button>
+          <button onclick="changeQtd(${item.id}, '${item.size}', '${item.color}', -1)">-</button>
+          <button onclick="removeItem(${item.id}, '${item.size}', '${item.color}')">🗑️</button>
+        </span>
+      </div>
+    `;
+  });
+}
+
+function updateCartCount() {
+  const count = cart.reduce((acc, item) => acc + item.qtd, 0);
+  document.getElementById("cart-count").innerText = count;
+}
+
+function changeQtd(id, size, color, delta) {
+  const item = cart.find(i => i.id === id && i.size === size && i.color === color);
+  if (item) {
+    item.qtd += delta;
+    if (item.qtd <= 0) removeItem(id, size, color);
+  }
+  renderCart();
+  updateCartCount();
+}
+
+function removeItem(id, size, color) {
+  cart = cart.filter(i => !(i.id === id && i.size === size && i.color === color));
+  renderCart();
+  updateCartCount();
+}
+
+function toggleCart() {
+  const modal = document.getElementById("cart-modal");
+  modal.style.display = modal.style.display === "none" ? "block" : "none";
+}
+
+function checkout() {
+  let message = "Olá! Quero comprar:\n";
+  cart.forEach(item => {
+    message += `${item.name} (${item.size}, ${item.color}) x${item.qtd}\n`;
+  });
+  const url = `https://wa.me/5545999157042?text=${encodeURIComponent(message)}`;
+  window.open(url, "_blank");
+}
+
+displayProducts(products);
+</script>
+</body>
+</html>
